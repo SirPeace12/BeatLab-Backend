@@ -23,14 +23,23 @@ To start the project, follow these commands:
     cd Backend-FlaskAPI
     ```
 
-2. Install the required dependencies. Run the following command:
+2. Activate virtualenv or create if no exist (the first and second commands only execute if virtualenv is not install in your computer)
+     ```
+     pip install virtualenv
+
+     virtualenv venv
+     
+     . \venv\Scripts\activate
+     ```
+
+3. Install the required dependencies. Run the following command:
     ```
     pip install -r requirements.txt
     ```
 
     Ensure that you have Python and pip installed on your system. The requirements.txt file contains the necessary dependencies and their versions.
 
-3. Start the Flask server:
+4. Start the Flask server:
     ```
     flask run
     ```
