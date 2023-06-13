@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# VsCode ignore files
+.vscode
+node_modules
+
 # Distribution / packaging
 .Python
 build/
