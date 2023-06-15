@@ -19,7 +19,6 @@ Please note that this API does not include the actual music content but focuses 
 To start the project, follow these commands:
 
 1. Clone or download this repository:
-   To clone :
    ```
    git clone https://github.com/JaimeLopez04/Backend-FlaskAPI
    ```
