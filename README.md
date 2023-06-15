@@ -18,12 +18,18 @@ Please note that this API does not include the actual music content but focuses 
 
 To start the project, follow these commands:
 
-1. Change the directory to Backend-FlaskAPI:
+1. Clone or download this repository:
+   To clone :
+   ```
+   git clone https://github.com/JaimeLopez04/Backend-FlaskAPI
+   ```
+
+2. Change the directory to Backend-FlaskAPI:
     ```
     cd Backend-FlaskAPI
     ```
 
-2. Activate virtualenv or create if no exist (the first and second commands only execute if virtualenv is not install in your computer)
+3. Activate virtualenv or create if no exist (Only execute the first command if virtualenv is not install in your computer)
      ```
      pip install virtualenv
 
@@ -32,14 +38,14 @@ To start the project, follow these commands:
      . \venv\Scripts\activate
      ```
 
-3. Install the required dependencies. Run the following command:
+4. Install the required dependencies. Run the following command:
     ```
     pip install -r requirements.txt
     ```
 
     Ensure that you have Python and pip installed on your system. The requirements.txt file contains the necessary dependencies and their versions.
 
-4. Start the Flask server:
+5. Start the Flask server:
     ```
     flask run
     ```
