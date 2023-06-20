@@ -10,7 +10,7 @@ This repository contains an API for a Spotify clone, allowing developers to buil
 - **Recommendations**: Utilize advanced algorithms to provide personalized music recommendations based on user preferences and listening history.
 - **Social Features**: Implement social features such as following other users, sharing playlists, and discovering new music based on what friends are listening to.
 
-This API is built with [insert programming language/framework] and follows industry best practices to ensure scalability, performance, and security. It provides a solid foundation for developers to create their own music streaming applications with a familiar Spotify-like experience.
+This API is built with Python and Flask API and follows industry best practices to ensure scalability, performance, and security. It provides a solid foundation for developers to create their own music streaming applications with a familiar Spotify-like experience.
 
 Please note that this API does not include the actual music content but focuses on the backend functionality needed to power a Spotify-like application.
 
