@@ -4,12 +4,14 @@ from config import db
 
 
 def login():
-    users = []
-    for doc in db.find():
-        users.append({
-            '_id': str(ObjectId(doc['_id'])),
-            'name': doc['name'],
-            'email': doc['email'],
-            'password': doc['password']
-        })
-    return jsonify(users)
+    userData = {
+        "username": request.json["username"],
+        "password": request.json["password"],
+    }
+    isLogged = False if db.find_one({"name": userData["username"]}) is None else True 
+    
+    if (isLogged ):
+        return jsonify({"Login" : "Login Successful" })
+    else:
+        return jsonify({"Login" : "Login Failed" })
+    
