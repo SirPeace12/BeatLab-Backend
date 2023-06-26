@@ -9,5 +9,3 @@ def login():
 @auth_routes.route("/register", methods=["POST"])
 def register():
     return auth.register()
-
-

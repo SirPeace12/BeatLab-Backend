@@ -1,6 +1,11 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect, request, url_for
 from flask_pymongo import PyMongo,ObjectId
-from config import db
+from flask_mail import Mail, Message
+from config import db, app
+import secrets
+app.config.from_pyfile('config.py')
+
+mail = Mail(app)
 
 def registered(userData):
     return False if userData == None else True 
@@ -23,16 +28,13 @@ def login():
         dbEmail = None
         dbPassword = None
     else:
-        print(str(db.find_one({'email':email})))
         dbEmail = dbSearch["email"]
         dbPassword = dbSearch["password"]
 
     if (registered (dbEmail)):
         return jsonify({"Login" : "Registerd User" })
-    
     elif (validate(password, dbPassword) and validate(email, dbEmail)):
         return jsonify({"Login" : "Login Successfull"})
-    
     else: 
         return jsonify({"Login" : "Login Failed" })
 
@@ -50,3 +52,4 @@ def register():
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Register Failed" })
+
