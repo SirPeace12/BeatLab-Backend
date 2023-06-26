@@ -6,3 +6,8 @@ auth_routes = Blueprint("auth", __name__)
 def login():
     return auth.login()
 
+@auth_routes.route("/register", methods=["POST"])
+def register():
+    return auth.register()
+
+

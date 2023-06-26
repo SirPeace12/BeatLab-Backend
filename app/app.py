@@ -11,7 +11,7 @@ app.register_blueprint(auth_routes)
 
 @app.route('/')
 def index():
-    return '<h1>holaaa<h1>'
+    return config.urlBase
 
 
 # @app.route('/users', methods=['POST'])
