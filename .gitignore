@@ -9,6 +9,9 @@ __pycache__/
 # VsCode ignore files
 .vscode
 node_modules
+.history
+./vscode
+./history
 
 # Distribution / packaging
 .Python
