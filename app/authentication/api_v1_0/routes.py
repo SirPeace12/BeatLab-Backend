@@ -18,4 +18,10 @@ def login():
 def register():
     return auth.register()
 
+@auth_routes.route("/configuration", methods=["POST"])
+def sendRecuperationEmail():
+    return auth.sendRecuperationEmail()
 
+@auth_routes.route('/resetPassword/<token>', methods=['GET', 'POST'])
+def resetPassword(token):
+    return auth.resetPassword(token)

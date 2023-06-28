@@ -11,3 +11,10 @@ db.create_index('email', unique=True)
 
 urlBase = "http://localhost:5173/"
 
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USE_TLS = True
+MAIL_USERNAME = 'info.beatlabapp@gmail.com'
+MAIL_PASSWORD = 'dgmqncakzsmachsq' 
+
+MAIL_DEFAULT_SENDER = 'miguelangelpazvelasco1@gmail.com'
