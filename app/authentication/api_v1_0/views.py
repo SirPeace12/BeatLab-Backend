@@ -46,7 +46,7 @@ def register():
         "state":True
     }
     if (not registered(userData["email"])):
-        result = db.insert_one(userData)
+        db.insert_one(userData)
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Register Failed" })
