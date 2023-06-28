@@ -1,6 +1,11 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect, request, url_for
 from flask_pymongo import PyMongo,ObjectId
-from config import db
+from flask_mail import Mail, Message
+from config import db, app
+import secrets
+app.config.from_pyfile('config.py')
+
+mail = Mail(app)
 
 def registered(userData):
     return False if userData == None else True 
@@ -23,16 +28,13 @@ def login():
         dbEmail = None
         dbPassword = None
     else:
-        print(str(db.find_one({'email':email})))
         dbEmail = dbSearch["email"]
         dbPassword = dbSearch["password"]
 
     if (registered (dbEmail)):
         return jsonify({"Login" : "Registerd User" })
-    
     elif (validate(password, dbPassword) and validate(email, dbEmail)):
         return jsonify({"Login" : "Login Successfull"})
-    
     else: 
         return jsonify({"Login" : "Login Failed" })
 
@@ -49,4 +51,51 @@ def register():
         db.insert_one(userData)
         return jsonify({"Register" : "Register Successful" })
     else:
-        return jsonify({"Register" : "Register Failed" })
+        return jsonify({"Register" : "Registered User" })
+    
+def sendRecuperationEmail():
+    userData = {
+        "email":request.json["email"]
+    }
+
+    emailUser = userData["email"]
+
+    token = secrets.token_hex(16)
+    reset_url = url_for('auth.resetPassword', token=token, _external=True)
+    msg = Message('Recuperación de contraseña', recipients=[emailUser])
+    msg.body = f'Hola, has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para restablecerla: {reset_url}'
+    mail.send(msg)
+
+    db.update_one({"email" : userData["email"]}, {'$set': {"resetToken": token}})
+    return jsonify({"Recuperation Email": "Email Sent Successfull"})
+
+def savePassword(userData, tokenUser):
+
+    newPassword = userData["newPassword"]
+    confirm_password = userData["confirmPassword"]
+
+    if (tokenUser):
+        if(newPassword == confirm_password):
+            db.update_one({'resetToken': tokenUser["token"]}, {'$set': {'password': newPassword}})
+        else:
+            return jsonify ({"resetPassword": "Passwords do not match"})
+
+    return jsonify ({"resetPassword": "Change Password Successfull"})
+
+def resetPassword(token):
+    tokenUser = db.find_one({'resetToken': token})
+    if request.method == 'POST':
+        userData = {
+            "newPassword":request.json["newPassword"],
+            "confirmPassword":request.json["confirmPassword"]
+        }
+        savePassword(userData, tokenUser)
+        print(token)
+        return jsonify ({"resetPassword": "Change Password Successfull"})
+    
+    if (tokenUser):
+        return redirect("http://localhost:5173/", code=302)
+    return jsonify ({"resetPassword": "Change Password Failed"})
+
+
+    
