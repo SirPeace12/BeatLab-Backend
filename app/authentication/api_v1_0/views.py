@@ -48,10 +48,10 @@ def register():
         "state":True
     }
     if (not registered(userData["email"])):
-        result = db.insert_one(userData)
+        db.insert_one(userData)
         return jsonify({"Register" : "Register Successful" })
     else:
-        return jsonify({"Register" : "Register Failed" })
+        return jsonify({"Register" : "Registered User" })
     
 def sendRecuperationEmail():
     userData = {
@@ -62,7 +62,6 @@ def sendRecuperationEmail():
 
     token = secrets.token_hex(16)
     reset_url = url_for('auth.resetPassword', token=token, _external=True)
-
     msg = Message('Recuperación de contraseña', recipients=[emailUser])
     msg.body = f'Hola, has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para restablecerla: {reset_url}'
     mail.send(msg)
@@ -70,28 +69,33 @@ def sendRecuperationEmail():
     db.update_one({"email" : userData["email"]}, {'$set': {"resetToken": token}})
     return jsonify({"Recuperation Email": "Email Sent Successfull"})
 
-def savePassword(userData, token):
+def savePassword(userData, tokenUser):
+
     newPassword = userData["newPassword"]
     confirm_password = userData["confirmPassword"]
 
-    tokenUser = db.find_one({'resetToken': token})
-
     if (tokenUser):
         if(newPassword == confirm_password):
-            db.update_one({'resetToken': token}, {'$set': {'password': newPassword}})
+            db.update_one({'resetToken': tokenUser["token"]}, {'$set': {'password': newPassword}})
         else:
             return jsonify ({"resetPassword": "Passwords do not match"})
 
     return jsonify ({"resetPassword": "Change Password Successfull"})
 
 def resetPassword(token):
+    tokenUser = db.find_one({'resetToken': token})
     if request.method == 'POST':
         userData = {
             "newPassword":request.json["newPassword"],
             "confirmPassword":request.json["confirmPassword"]
         }
-        savePassword(userData, token)
-        
-    return redirect("http://localhost:5173/", code=302)
+        savePassword(userData, tokenUser)
+        print(token)
+        return jsonify ({"resetPassword": "Change Password Successfull"})
+    
+    if (tokenUser):
+        return redirect("http://localhost:5173/", code=302)
+    return jsonify ({"resetPassword": "Change Password Failed"})
+
 
     
