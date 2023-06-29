@@ -30,12 +30,12 @@ def login():
     else:
         dbEmail = dbSearch["email"]
         dbPassword = dbSearch["password"]
+        print(str(dbEmail)+'  '+str(dbPassword))
 
-    if (registered (dbEmail)):
-        return jsonify({"Login" : "Registerd User" })
-    elif (validate(password, dbPassword) and validate(email, dbEmail)):
+    if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
         return jsonify({"Login" : "Login Successfull"})
     else: 
+        print(str(dbEmail))
         return jsonify({"Login" : "Login Failed" })
 
 def register():
