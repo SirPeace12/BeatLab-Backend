@@ -1,5 +1,6 @@
 from flask import jsonify, redirect, request, url_for
 from flask_mail import Mail, Message
+from flask import session
 from config import db, app
 import secrets
 
@@ -53,6 +54,10 @@ def register():
     else:
         return jsonify({"Register" : "Registered User" })
     
+def logout():
+    session.clear()
+    return jsonify({"Logout": "User Logout"})
+
 def sendRecuperationEmail():
     userData = {
         "email":request.json["email"]

@@ -16,6 +16,10 @@ def login():
 def register():
     return auth.register()
 
+@auth_routes.route("/logout", methods=["POST"])
+def logout():
+    return auth.logout()
+
 @auth_routes.route("/sendRecuperationEmail", methods=["POST"])
 def sendRecuperationEmail():
     return auth.sendRecuperationEmail()
