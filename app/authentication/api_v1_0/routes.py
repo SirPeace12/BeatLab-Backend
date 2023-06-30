@@ -1,8 +1,6 @@
 from flask import Blueprint
 import authentication.api_v1_0.views  as auth
 
-
-
 auth_routes = Blueprint("auth", __name__)
 
 @auth_routes.after_request
@@ -18,10 +16,14 @@ def login():
 def register():
     return auth.register()
 
-@auth_routes.route("/configuration", methods=["POST"])
+@auth_routes.route("/sendRecuperationEmail", methods=["POST"])
 def sendRecuperationEmail():
     return auth.sendRecuperationEmail()
 
 @auth_routes.route('/resetPassword/<token>', methods=['GET', 'POST'])
 def resetPassword(token):
     return auth.resetPassword(token)
+
+@auth_routes.route("/confirmToken", methods=["POST"])
+def confirmToken():
+    return auth.confirmToken()

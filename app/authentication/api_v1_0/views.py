@@ -47,7 +47,9 @@ def register():
         "phone": request.json["phone"],
         "state":True
     }
-    if (not registered(userData["email"])):
+    dbSearch = db.find_one({'email':userData['email']})
+    
+    if (not registered(dbSearch)):
         db.insert_one(userData)
         return jsonify({"Register" : "Register Successful" })
     else:
@@ -59,6 +61,8 @@ def sendRecuperationEmail():
     }
 
     emailUser = userData["email"]
+
+    # token1 = random(000000 , 999999)
 
     token = secrets.token_hex(16)
     reset_url = url_for('auth.resetPassword', token=token, _external=True)
@@ -95,6 +99,19 @@ def resetPassword(token):
     
     if (tokenUser):
         return redirect("http://localhost:5173/", code=302)
+    return jsonify ({"resetPassword": "Change Password Failed"})
+
+def confirmToken():
+    userData = {
+            "token":request.json["token"]
+        }
+    
+    token = userData["token"]
+
+    user = db.find_one({ "resetToken": token })
+
+    print(user)
+
     return jsonify ({"resetPassword": "Change Password Failed"})
 
 
