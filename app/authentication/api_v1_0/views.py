@@ -33,6 +33,7 @@ def login():
         dbPassword = dbSearch["password"]
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
+        session['user'] = email
         return jsonify({"Login" : "Login Successfull"})
     else: 
         return jsonify({"Login" : "Login Failed" })
