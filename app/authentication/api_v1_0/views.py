@@ -1,5 +1,4 @@
 from flask import jsonify, redirect, request, url_for
-from flask import session
 from flask_mail import Mail, Message
 from config import db, app
 import secrets
@@ -33,7 +32,6 @@ def login():
         dbPassword = dbSearch["password"]
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
-        session['user']= {'emailUser':email}
         return jsonify({"Login" : "Login Successfull"})
     else: 
         return jsonify({"Login" : "Login Failed" })
@@ -54,11 +52,6 @@ def register():
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })
-    
-def logout():
-    session.clear()
-    return jsonify({"Logout": "User Logout"})
-    
     
 def sendRecuperationEmail():
     userData = {
