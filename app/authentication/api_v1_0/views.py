@@ -8,7 +8,6 @@ app.config.from_pyfile('config.py')
 mail = Mail(app)
 
 def registered(userData):
-    print("Si consulta registered users")
     return False if userData == None else True 
 
 def validate(data, dbData):
@@ -31,12 +30,10 @@ def login():
     else:
         dbEmail = dbSearch["email"]
         dbPassword = dbSearch["password"]
-        print(str(dbEmail)+'  '+str(dbPassword))
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
         return jsonify({"Login" : "Login Successfull"})
     else: 
-        print(str(dbEmail))
         return jsonify({"Login" : "Login Failed" })
 
 def register():
@@ -48,7 +45,7 @@ def register():
         "phone": request.json["phone"],
         "state":True
     }
-    if (registered(userData["email"])):
+    if (not registered(userData["email"])):
         db.insert_one(userData)
         return jsonify({"Register" : "Register Successful" })
     else:
