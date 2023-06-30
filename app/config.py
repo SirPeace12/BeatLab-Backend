@@ -1,5 +1,5 @@
-from flask import Flask, jsonify, request
-from flask_pymongo import PyMongo,ObjectId
+from flask import Flask
+from flask_pymongo import PyMongo
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -8,7 +8,6 @@ app.config['MONGO_URI']='mongodb://localhost:27017/BeatLab'
 mongo = PyMongo(app)
 db = mongo.db.users
 db.create_index('email', unique=True)
-print(str(db))
 
 urlBase = "http://localhost:5173/"
 

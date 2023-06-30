@@ -1,13 +1,14 @@
-from flask import Flask, jsonify, redirect, request, url_for
-from flask_pymongo import PyMongo,ObjectId
+from flask import jsonify, redirect, request, url_for
 from flask_mail import Mail, Message
 from config import db, app
 import secrets
+
 app.config.from_pyfile('config.py')
 
 mail = Mail(app)
 
 def registered(userData):
+    print("Si consulta registered users")
     return False if userData == None else True 
 
 def validate(data, dbData):
@@ -47,7 +48,7 @@ def register():
         "phone": request.json["phone"],
         "state":True
     }
-    if (not registered(userData["email"])):
+    if (registered(userData["email"])):
         db.insert_one(userData)
         return jsonify({"Register" : "Register Successful" })
     else:
