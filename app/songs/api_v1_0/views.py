@@ -1,4 +1,5 @@
 import pyrebase
+from flask import session
 
 # storage.child
 def upload():
@@ -15,5 +16,6 @@ def upload():
     };
 
     firebaseStorage = pyrebase.initialize_app(config)
+    
     storage = firebaseStorage.storage()
 
