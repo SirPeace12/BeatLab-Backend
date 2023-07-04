@@ -92,7 +92,6 @@ def resetPassword(token):
             "confirmPassword":request.json["confirmPassword"]
         }
         savePassword(userData, tokenUser)
-        print(token)
         return jsonify ({"resetPassword": "Change Password Successfull"})
     
     if (tokenUser):
