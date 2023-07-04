@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_pymongo import PyMongo
+from flask_session import Session
 from flask_cors import CORS
 from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_blob_sas
 from flask_cloudy import Storage
@@ -23,6 +24,11 @@ dbSongs = mongo.db.songs
 db.create_index('email', unique=True)
 mongoengine.connect('BeatLab', host='localhost', port=27017)
 
+
+# Configuracion para enviar el correo de recuperacion
+app.config['SESSION_TYPE'] = 'filesystem'
+app.secret_key = 'beatlab'
+Session(app)
 
 # Configuracion para enviar el correo de recuperacion
 
