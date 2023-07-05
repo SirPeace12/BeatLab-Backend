@@ -54,13 +54,10 @@ def register():
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })
-<<<<<<< HEAD
-=======
     
 def logout():
     session.clear()
     return jsonify({"Logout": "User Logout"})
->>>>>>> ed60db2e3fb45545866d3052997ff95339f0ae8a
 
 def sendRecuperationEmail():
     userData = {
