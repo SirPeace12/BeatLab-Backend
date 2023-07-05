@@ -28,7 +28,7 @@ def searchGender():
 def searchTitle():
     return songs.searchTitle()
 
-# @songs_routes.route("/songs/play", methods=["GET"])
-# def play():
-#     return songs.play()
+@songs_routes.route("/songs/play", methods=["GET"])
+def play():
+    return songs.play()
 

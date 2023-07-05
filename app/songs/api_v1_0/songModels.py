@@ -6,5 +6,5 @@ class Song(mongoengine.Document):
     artist = mongoengine.StringField()
     gender = mongoengine.StringField()
     favorite = mongoengine.BooleanField(default=False)
-    url = mongoengine.StringField()
+    songURL = mongoengine.StringField()
     user = mongoengine.StringField()
