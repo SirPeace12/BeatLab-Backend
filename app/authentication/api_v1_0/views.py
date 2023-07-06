@@ -35,13 +35,13 @@ def login():
         dbPassword = dbSearch["password"]
 
     if (not registered(dbEmail)):
-        return jsonify({"LoginFailed" : "UnregisteredUser" })
+        return jsonify({"LoginFailed" : "Unregistered User" })
 
     if (not validate(password, dbPassword)):
-        return jsonify({"LoginFailed" : "IncorrectPassword" })
+        return jsonify({"LoginFailed" : "Incorrect Password" })
     
     if (not validate(email, dbEmail)):
-        return jsonify({"LoginFailed" : "IncorrectEmail" })
+        return jsonify({"LoginFailed" : "Incorrect Email" })
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
         user = {
@@ -52,7 +52,7 @@ def login():
         session['user'] = email
         return jsonify({"LoginSuccessfull" : user})
     else: 
-        return jsonify({"LoginFailed" : "LoginFailed" })
+        return jsonify({"LoginFailed" : "Login Failed" })
     
 def sendWelcomeEmail(emailUser):
     msg = Message('Recuperación de contraseña', recipients=[emailUser])
@@ -73,9 +73,9 @@ def register():
     if (not registered(dbSearch)):
         db.insert_one(userData)
         sendWelcomeEmail(userData['email'])
-        return jsonify({"Register" : "RegisterSuccessful" })
+        return jsonify({"Register" : "Register Successful" })
     else:
-        return jsonify({"Register" : "RegisteredUser" })
+        return jsonify({"Register" : "Registered User" })
     
 def logout():
     session.clear()
@@ -108,9 +108,9 @@ def savePassword(userData, tokenUser):
         if(newPassword == confirm_password):
             db.update_one({'resetToken': tokenUser["token"]}, {'$set': {'password': newPassword}})
         else:
-            return jsonify ({"resetPassword": "PasswordsDoNotMatch"})
+            return jsonify ({"resetPassword": "Passwords Do Not Match"})
 
-    return jsonify ({"resetPassword": "ChangePasswordSuccessfull"})
+    return jsonify ({"resetPassword": "Change Password Successfull"})
 
 def resetPassword(token):
     tokenUser = db.find_one({'resetToken': token})
@@ -120,7 +120,7 @@ def resetPassword(token):
             "confirmPassword":request.json["confirmPassword"]
         }
         savePassword(userData, tokenUser)
-        return jsonify ({"resetPassword": "ChangePasswordSuccessfull"})
+        return jsonify ({"resetPassword": "Change Password Successfull"})
     
     if (tokenUser):
         return redirect("http://localhost:5173/", code=302)
