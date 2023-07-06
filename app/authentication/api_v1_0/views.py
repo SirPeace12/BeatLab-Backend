@@ -53,8 +53,35 @@ def login():
         return jsonify({"LoginFailed" : "Login Failed" })
     
 def sendWelcomeEmail(emailUser):
-    msg = Message('Recuperación de contraseña', recipients=[emailUser])
-    msg.body = f'¡Bienvenido a BeatLab! Tu destino musical definitivo para guardar y disfrutar de tus canciones favoritas en un solo lugar. Explora, crea y comparte melodías increíbles con otros amantes de la música. ¡Únete a nuestra comunidad y descubre un nuevo nivel de experiencia musical en BeatLab!'
+    msg = Message('Bienvenido A BeatLab', recipients=[emailUser])
+    msg.html = '''
+    <html>
+    <head>
+        <style>
+            h1 { color: #43046E; }
+            p { font-size: 14px; }
+        </style>
+    </head>
+    <body>
+    <div style="text-align: center; align-items: center;  justify-content: center;">
+        <h1>Bienvenido a BeatLab</h1>
+        <p>Tu destino musical definitivo para guardar y disfrutar de tus canciones favoritas en un solo lugar.</p>
+        <p>Explora, crea y comparte melodías increíbles con otros amantes de la música.</p>
+        <p>¡Gracias por unirte a nuestra aplicación para guardar canciones!</p>
+        <p>Esperamos que disfrutes de una experiencia musical única con BeatLab.</p>
+       <img src="https://i.postimg.cc/4NBdd9NF/Beat-Lab-Logo.png" width="300" height="300">
+    
+       <div style="align-items: center; justify-content: center; display:flex;">
+        <p>Developed by Raccoon Soft</p>
+       <img src="https://i.postimg.cc/dtH595VR/Racoon-Soft-Logo.webp" width="14" height="14">
+    
+        </div>
+    </div>
+    
+
+    </body>
+    </html>
+    '''
     mail.send(msg)
     
 def register():
