@@ -12,6 +12,9 @@ node_modules
 .history
 ./vscode
 ./history
+.flask_session
+./flask_session
+flask_session
 
 # Distribution / packaging
 .Python
