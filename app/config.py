@@ -11,10 +11,16 @@ app = Flask(__name__)
 
 # Conexion al servidor de las canciones en Microsoft BLOB storage
 CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=beatlab;AccountKey=wxtVr/zpbjPkihy/ysj528e4Af7eN5lpDvhNbBhmJyuG9kjzLlitGmlH/Mn9pkvGSMmpNchi/ygV+AStI1V2AQ==;EndpointSuffix=core.windows.net"
-CONTAINER_NAME = "songs"
+CONTAINER_NAME_SONG = "songs"
+CONTAINER_NAME_IMAGES_SONG = "imagesong"
+CONTAINER_NAME_IMAGES_USER = "imageuser"
+
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-container_client = blob_service_client.get_container_client(CONTAINER_NAME)
+container_client_song = blob_service_client.get_container_client(CONTAINER_NAME_SONG)
+container_client_images_song = blob_service_client.get_container_client(CONTAINER_NAME_IMAGES_SONG)
+container_client_images_user = blob_service_client.get_container_client(CONTAINER_NAME_IMAGES_USER)
+
 
 # Conexion a la base de datos en MONGO
 app.config['MONGO_URI']='mongodb://localhost:27017/BeatLab'
