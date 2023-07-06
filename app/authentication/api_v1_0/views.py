@@ -14,6 +14,11 @@ def registered(userData):
 def validate(data, dbData):
     return data == dbData
 
+def userData(userData):
+    salida = {
+
+    }
+
 def login():
     userData = {
         "email": request.json["email"],
@@ -25,6 +30,12 @@ def login():
 
     dbSearch = db.find_one({'email':email})
 
+    user = {
+        'nameUser' : dbSearch['nameUser'],
+        'lastNameUser' : dbSearch['lastNameUser'],
+        'email' : dbSearch['email']
+    }
+
     if (dbSearch is None):
         dbEmail = None
         dbPassword = None
@@ -34,9 +45,9 @@ def login():
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
         session['user'] = email
-        return jsonify({"Login" : "Login Successfull"})
+        return jsonify({"Login Successfull" : user})
     else: 
-        return jsonify({"Login" : "Login Failed" })
+        return jsonify({"Login Failed" : "Login Failed" })
 
 def register():
     userData = {
