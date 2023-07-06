@@ -25,11 +25,7 @@ def login():
 
     dbSearch = db.find_one({'email':email})
 
-    user = {
-        'nameUser' : dbSearch['nameUser'],
-        'lastNameUser' : dbSearch['lastNameUser'],
-        'email' : dbSearch['email']
-    }
+    
 
     if (dbSearch is None):
         dbEmail = None
@@ -48,6 +44,11 @@ def login():
         return jsonify({"Login Failed" : "Incorrect Email" })
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
+        user = {
+        'nameUser' : dbSearch['nameUser'],
+        'lastNameUser' : dbSearch['lastNameUser'],
+        'email' : dbSearch['email']
+        }
         session['user'] = email
         return jsonify({"Login Successfull" : user})
     else: 
