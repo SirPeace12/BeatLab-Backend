@@ -54,17 +54,8 @@ def upload():
         "fileSong":  request.files['fileSong'],
         "fileImage":  request.files['fileImage'],
     }
-    print(songData["fileSong"].filename)
     songData["fileSong"].filename = newName(songData["fileSong"].filename)
-    print(songData["fileSong"].filename)
-
-    print("---------")
-
-    print(songData["fileImage"].filename)
-
     songData["fileImage"].filename = newName(songData["fileImage"].filename)
-    print(songData["fileImage"].filename)
-
 
     uploadSongServer(songData["fileSong"])
     uploadSongImagesServer(songData["fileImage"])
@@ -81,6 +72,7 @@ def getAllSongs():
     songList = []
     for song in songs:
         songData = {
+            '_id' : song._id,
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
@@ -99,6 +91,7 @@ def listFavorites():
 
     for song in songs:
         songData = {
+            '_id' : song._id,
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
@@ -138,6 +131,7 @@ def searchGender():
 
     for song in songs:
         songData = {
+            '_id' : song._id,
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
@@ -160,6 +154,7 @@ def searchTitle():
 
     for song in songs:
         songData = {
+            '_id' : song._id,
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
