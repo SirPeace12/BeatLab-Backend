@@ -43,7 +43,12 @@ def login():
         return jsonify({"Login Successfull" : user})
     else: 
         return jsonify({"Login Failed" : "Login Failed" })
-
+    
+def sendWelcomeEmail(emailUser):
+    msg = Message('Recuperación de contraseña', recipients=[emailUser])
+    msg.body = f'¡Bienvenido a BeatLab! Tu destino musical definitivo para guardar y disfrutar de tus canciones favoritas en un solo lugar. Explora, crea y comparte melodías increíbles con otros amantes de la música. ¡Únete a nuestra comunidad y descubre un nuevo nivel de experiencia musical en BeatLab!'
+    mail.send(msg)
+    
 def register():
     userData = {
         "nameUser": request.json["nameUser"],
@@ -57,6 +62,7 @@ def register():
     
     if (not registered(dbSearch)):
         db.insert_one(userData)
+        sendWelcomeEmail(userData['email'])
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })
