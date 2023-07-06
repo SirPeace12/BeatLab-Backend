@@ -35,13 +35,11 @@ def login():
         dbPassword = dbSearch["password"]
 
     if (not registered(dbEmail)):
-        return jsonify({"LoginFailed" : "Unregistered User" })
+        return jsonify({"LoginFailed" : "Usuario no registrado" })
 
     if (not validate(password, dbPassword)):
-        return jsonify({"LoginFailed" : "Incorrect Password" })
+        return jsonify({"LoginFailed" : "Contraseña Incorrecta" })
     
-    if (not validate(email, dbEmail)):
-        return jsonify({"LoginFailed" : "Incorrect Email" })
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
         user = {
