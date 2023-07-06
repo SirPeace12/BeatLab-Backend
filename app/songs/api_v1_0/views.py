@@ -182,13 +182,3 @@ def play():
     songURL = song.songURL
 
     return jsonify({"Play Song" : songURL})
-
-# metodos para modificar atributos 
-
-def modifyTitle():
-    songData = {
-        "title" : request.json["title"],
-    }
-
-
-
