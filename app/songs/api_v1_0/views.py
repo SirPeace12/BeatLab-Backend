@@ -82,7 +82,7 @@ def getAllSongs():
         }
         songList.append(songData)
 
-    return jsonify({"Songs All" : songList })
+    return jsonify({"SongsAll" : songList })
 
 def listFavorites():
     user = session.get('user')
@@ -101,7 +101,7 @@ def listFavorites():
         }
         songList.append(songData)
 
-    return jsonify({"Songs Favorites" :songList })
+    return jsonify({"SongsFavorites" :songList })
     
 def favorite():
     songData = {
@@ -118,7 +118,7 @@ def favorite():
         song.favorite = True
     song.save()
 
-    return jsonify({"Song Favorite" : "Successfull"})
+    return jsonify({"SongFavorite" : "Successfull"})
 
 def searchGender():
     songData = {
@@ -141,7 +141,7 @@ def searchGender():
         }
         songList.append(songData)
 
-    return jsonify({"Search gender" :songList })
+    return jsonify({"SearchGender" :songList })
 
 def searchTitle():
     songData = {
@@ -164,7 +164,7 @@ def searchTitle():
         }
         songList.append(songData)
 
-    return jsonify({"Search title" :songList })
+    return jsonify({"SearchTitle" :songList })
 
 def play():
     songData = {
@@ -176,4 +176,4 @@ def play():
 
     songURL = song.songURL
 
-    return jsonify({"Play Song" : songURL})
+    return jsonify({"PlaySong" : songURL})
