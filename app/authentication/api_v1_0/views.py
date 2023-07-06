@@ -62,22 +62,38 @@ def sendWelcomeEmail(emailUser):
             p { font-size: 14px; }
         </style>
     </head>
-    <body>
-    <div style="text-align: center; align-items: center;  justify-content: center;">
-        <h1>Bienvenido a BeatLab</h1>
-        <p>Tu destino musical definitivo para guardar y disfrutar de tus canciones favoritas en un solo lugar.</p>
-        <p>Explora, crea y comparte melodías increíbles con otros amantes de la música.</p>
-        <p>¡Gracias por unirte a nuestra aplicación para guardar canciones!</p>
-        <p>Esperamos que disfrutes de una experiencia musical única con BeatLab.</p>
-       <img src="https://i.postimg.cc/4NBdd9NF/Beat-Lab-Logo.png" width="300" height="300">
-    
-       <div style="align-items: center; justify-content: center; display:flex;">
-        <p>Developed by Raccoon Soft</p>
-       <img src="https://i.postimg.cc/dtH595VR/Racoon-Soft-Logo.webp" width="14" height="14">
-    
+        <body 
+            style="background: #fff; display: flex; justify-content: center; align-items: center;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+        
+        <div style="text-align: center; align-items: center;  justify-content: center;
+        border: 4px solid #ebb8f2; padding: 20px; border-radius: 20px; ">
+            <h1 style="font-size: 2.5rem; padding: 0px">
+                ¡Bienvenido a BeatLab, x!
+            </h1>
+            <p style="  color: rgb(215, 82, 233);">
+                -------------------------------------------------
+            </p>
+            <p>
+                Tu destino musical definitivo para guardar y disfrutar de tus canciones favoritas en un solo lugar.
+                Explora, crea y comparte melodías increíbles con otros amantes de la música.
+            </p>
+            <h2>
+                ¡Gracias por unirte a nuestra aplicación para guardar canciones!
+            </h2>
+            <p>
+                Esperamos que disfrutes de una experiencia musical única con BeatLab.
+            </p>
+            <img src="https://i.postimg.cc/4NBdd9NF/Beat-Lab-Logo.png" width="300" height="300">
+        
+            <div style="align-items: center; justify-content: center; display:flex;">
+                <p style="  color: rgb(94, 35, 102);">
+                    Developed by Raccoon Soft
+                </p>
+                <img src="https://i.postimg.cc/dtH595VR/Racoon-Soft-Logo.webp" width="16" height="16" style="margin-left: 3px">
+            </div>
         </div>
-    </div>
-    
+        
 
     </body>
     </html>
