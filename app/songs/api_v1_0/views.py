@@ -72,7 +72,7 @@ def getAllSongs():
     songList = []
     for song in songs:
         songData = {
-            '_id' : song._id,
+            'id' : str(song.id),
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
@@ -91,7 +91,7 @@ def listFavorites():
 
     for song in songs:
         songData = {
-            '_id' : song._id,
+            'id' : str(song.id),
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
@@ -131,7 +131,7 @@ def searchGender():
 
     for song in songs:
         songData = {
-            '_id' : song._id,
+            'id' : str(song.id),
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
@@ -154,7 +154,7 @@ def searchTitle():
 
     for song in songs:
         songData = {
-            '_id' : song._id,
+            'id' : str(song.id),
             'title' : song.title,
             'artist' : song.artist,
             'gender' : song.gender,
