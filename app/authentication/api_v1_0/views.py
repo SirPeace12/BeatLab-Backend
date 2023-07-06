@@ -14,11 +14,6 @@ def registered(userData):
 def validate(data, dbData):
     return data == dbData
 
-def userData(userData):
-    salida = {
-
-    }
-
 def login():
     userData = {
         "email": request.json["email"],
