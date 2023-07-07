@@ -1,11 +1,12 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 import songs.api_v1_0.views  as songs
 
 songs_routes = Blueprint("songs", __name__)
 
-@songs_routes.route("/songs/<string:email>", methods=["GET"])
-def showAll(email):
+@songs_routes.route("/songs", methods=["GET"])
+def showAll():
+    email = request.args.get("user")
     return songs.getAllSongs(email)
 
 @songs_routes.route("/songs/upload", methods=["POST"])
