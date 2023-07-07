@@ -47,14 +47,13 @@ def createSongDataBase(songData, user, songURL,imageSongURL):
           )
     song.save()
 
-def upload():
+def upload(email):
     songData = {
         "title": request.form.get('title'),
         "artist": request.form.get('artist'),
         "gender": request.form.get('gender'),
         "fileSong":  request.files['fileSong'],
         "fileImage":  request.files['fileImage'],
-        "user" :request.files['user'],
     }
     songData["fileSong"].filename = newName(songData["fileSong"].filename)
     songData["fileImage"].filename = newName(songData["fileImage"].filename)
@@ -65,7 +64,7 @@ def upload():
     songURL = generateSongURL(songData["fileSong"])
     imageSongURL = generatePhotoSongURL(songData["fileImage"])
 
-    createSongDataBase(songData,songData['user'] ,songURL,imageSongURL)
+    createSongDataBase(songData,email ,songURL,imageSongURL)
 
     return jsonify({"Upload": "Successfull"})
 
@@ -88,8 +87,8 @@ def getAllSongs(email):
 
     return jsonify({"SongsAll" : songList })
 
-def listFavorites():
-    user = session.get('user')
+def listFavorites(email):
+    user = email
     songs = Song.objects(favorite = True, user=user)
     songList = []
 
@@ -107,12 +106,12 @@ def listFavorites():
 
     return jsonify({"SongsFavorites" :songList })
     
-def favorite():
+def favorite(email):
     songData = {
         'title' : request.json["title"],
     }
 
-    user = session.get('user')
+    user = email
 
     song = Song.objects(title =songData["title"], user=user).first()
     
@@ -124,12 +123,12 @@ def favorite():
 
     return jsonify({"SongFavorite" : "Successfull"})
 
-def searchGender():
+def searchGender(email):
     songData = {
         'gender': request.json["gender"],
     }
 
-    user = session.get('user')
+    user = email
     songs = Song.objects(gender = songData["gender"], user=user)
     songList = []
 
@@ -147,12 +146,12 @@ def searchGender():
 
     return jsonify({"SearchGender" :songList })
 
-def searchTitle():
+def searchTitle(email):
     songData = {
         'title': request.json["title"],
     }
 
-    user = session.get('user')
+    user = email
     songs = Song.objects(title = songData["title"], user=user)
     songList = []
 
@@ -170,11 +169,11 @@ def searchTitle():
 
     return jsonify({"SearchTitle" :songList })
 
-def play():
+def play(email):
     songData = {
         "title" : request.json["title"]
     }
-    user = session.get('user')
+    user = email
 
     song = Song.objects(title = songData["title"], user=user).first()
 

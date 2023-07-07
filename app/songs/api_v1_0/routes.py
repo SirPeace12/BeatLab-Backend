@@ -11,25 +11,31 @@ def showAll():
 
 @songs_routes.route("/songs/upload", methods=["POST"])
 def upload():
-    return songs.upload()
+    email = request.args.get("user")
+    return songs.upload(email)
 
 @songs_routes.route("/songs/favorite", methods=["POST"])
 def favorite():
-    return songs.favorite()
+    email = request.args.get("user")
+    return songs.favorite(email)
 
 @songs_routes.route("/songs/listfavorite", methods=["GET"])
 def listfavorite():
-    return songs.listFavorites()
+    email = request.args.get("user")
+    return songs.listFavorites(email)
 
 @songs_routes.route("/songs/searchGender", methods=["POST"])
 def searchGender():
-    return songs.searchGender()
+    email = request.args.get("user")
+    return songs.searchGender(email)
 
 @songs_routes.route("/songs/searchTitle", methods=["POST"])
 def searchTitle():
-    return songs.searchTitle()
+    email = request.args.get("user")
+    return songs.searchTitle(email)
 
 @songs_routes.route("/songs/play", methods=["GET"])
 def play():
-    return songs.play()
+    email = request.args.get("user")
+    return songs.play(email)
 
