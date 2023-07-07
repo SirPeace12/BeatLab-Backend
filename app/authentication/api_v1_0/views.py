@@ -38,8 +38,6 @@ def login():
 
         dbSearch = db.find_one({'email':email})
 
-        
-
         if (dbSearch is None):
             dbEmail = None
             dbPassword = None
@@ -52,20 +50,19 @@ def login():
 
         if (not validate(password, dbPassword)):
             return jsonify({"LoginFailed" : "Contraseña Incorrecta" })
+    
+        if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
+            user = {
+            'nameUser' : dbSearch['nameUser'],
+            'lastNameUser' : dbSearch['lastNameUser'],
+            'email' : dbSearch['email']
+            }
+            session['user'] = email
+            return jsonify({"LoginSuccessfull" : user})
+        else: 
+            return jsonify({"LoginFailed" : "Login Failed" })
     else:
         return handle_options_request()
-    
-
-    if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
-        user = {
-        'nameUser' : dbSearch['nameUser'],
-        'lastNameUser' : dbSearch['lastNameUser'],
-        'email' : dbSearch['email']
-        }
-        session['user'] = email
-        return jsonify({"LoginSuccessfull" : user})
-    else: 
-        return jsonify({"LoginFailed" : "Login Failed" })
     
 def sendWelcomeEmail(emailUser):
     msg = Message('Bienvenido A BeatLab', recipients=[emailUser])
