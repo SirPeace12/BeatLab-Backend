@@ -10,7 +10,11 @@ def add_headers(response):
     response.headers['Content-Type'] = 'application/json'  # Configura el Content-Type como application/json
     return auth.add_cors_headers(response)
 
-@auth_routes.route("/login", methods=["POST", "OPTIONS"])
+@auth_routes.route("/login", methods=["OPTIONS"])
+def handle_options_request():
+    return auth.handle_options_request()
+
+@auth_routes.route("/login", methods=["POST"])
 def login():
     return auth.login()
 
