@@ -3,15 +3,14 @@ import authentication.api_v1_0.views  as auth
 
 auth_routes = Blueprint("auth", __name__)
 
-def add_cors_headers(response):
-    return auth.add_cors_headers(response)
+
 
 @auth_routes.after_request
 def add_headers(response):
     response.headers['Content-Type'] = 'application/json'  # Configura el Content-Type como application/json
-    return response
+    return auth.add_cors_headers(response)
 
-@auth_routes.route("/login", methods=["POST"])
+@auth_routes.route("/login", methods=["POST", "OPTIONS"])
 def login():
     return auth.login()
 
