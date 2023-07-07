@@ -14,31 +14,46 @@ def registered(userData):
 def validate(data, dbData):
     return data == dbData
 
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'  # Permitir todas las solicitudes de origen cruzado
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'  # Métodos permitidos
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # Encabezados permitidos
+    return response
+
+def handle_options_request():
+    # Realizar acciones necesarias para la solicitud OPTIONS
+    # ...
+    return jsonify({'message': 'CORS preflight request'})
+
+
 def login():
-    userData = {
-        "email": request.json["email"],
-        "password": request.json["password"],
-    }
+    if request.method == 'POST':
+        userData = {
+            "email": request.json["email"],
+            "password": request.json["password"],
+        }
 
-    password = userData['password'] 
-    email = userData['email']
+        password = userData['password'] 
+        email = userData['email']
 
-    dbSearch = db.find_one({'email':email})
+        dbSearch = db.find_one({'email':email})
 
-    
+        
 
-    if (dbSearch is None):
-        dbEmail = None
-        dbPassword = None
+        if (dbSearch is None):
+            dbEmail = None
+            dbPassword = None
+        else:
+            dbEmail = dbSearch["email"]
+            dbPassword = dbSearch["password"]
+
+        if (not registered(dbEmail)):
+            return jsonify({"LoginFailed" : "Usuario no registrado" })
+
+        if (not validate(password, dbPassword)):
+            return jsonify({"LoginFailed" : "Contraseña Incorrecta" })
     else:
-        dbEmail = dbSearch["email"]
-        dbPassword = dbSearch["password"]
-
-    if (not registered(dbEmail)):
-        return jsonify({"LoginFailed" : "Usuario no registrado" })
-
-    if (not validate(password, dbPassword)):
-        return jsonify({"LoginFailed" : "Contraseña Incorrecta" })
+        return handle_options_request()
     
 
     if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
