@@ -69,10 +69,8 @@ def upload():
 
     return jsonify({"Upload": "Successfull"})
 
-def getAllSongs():
-    userData = {
-        "user" :request.json['user'],
-    }
+def getAllSongs(email):
+    userData = email
     songs = Song.objects(user=userData['user'])
     songList = []
     for song in songs:

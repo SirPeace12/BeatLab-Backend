@@ -4,9 +4,9 @@ import songs.api_v1_0.views  as songs
 
 songs_routes = Blueprint("songs", __name__)
 
-@songs_routes.route("/songs", methods=["GET"])
-def showAll():
-    return songs.getAllSongs()
+@songs_routes.route("/songs/<string:email>", methods=["GET"])
+def showAll(email):
+    return songs.getAllSongs(email)
 
 @songs_routes.route("/songs/upload", methods=["POST"])
 def upload():
