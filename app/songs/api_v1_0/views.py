@@ -35,8 +35,8 @@ def generateSongURL(file):
         expiry=datetime.utcnow() + timedelta(hours=720))  # Expiración del token de SAS )
     return f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME_SONG}/{file.filename}?{sas_token}"
     
-def createSongDataBase(songData,songURL,imageSongURL):
-    userEmail = session.get('user')
+def createSongDataBase(songData, user, songURL,imageSongURL):
+    userEmail = user
     print(userEmail)
     song =Song(title = songData["title"],
           artist = songData["artist"],
@@ -54,6 +54,7 @@ def upload():
         "gender": request.form.get('gender'),
         "fileSong":  request.files['fileSong'],
         "fileImage":  request.files['fileImage'],
+        "user" :request.files['user'],
     }
     songData["fileSong"].filename = newName(songData["fileSong"].filename)
     songData["fileImage"].filename = newName(songData["fileImage"].filename)
@@ -64,7 +65,7 @@ def upload():
     songURL = generateSongURL(songData["fileSong"])
     imageSongURL = generatePhotoSongURL(songData["fileImage"])
 
-    createSongDataBase(songData,songURL,imageSongURL)
+    createSongDataBase(songData,songData['user'] ,songURL,imageSongURL)
 
     return jsonify({"Upload": "Successfull"})
 
