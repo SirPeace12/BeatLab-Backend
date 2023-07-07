@@ -142,11 +142,6 @@ def register():
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })
-    
-def logout():
-    session.clear()
-    return jsonify({"Logout": "UserLogout"})
-
 
 def generateToken(length):
     characters = string.digits

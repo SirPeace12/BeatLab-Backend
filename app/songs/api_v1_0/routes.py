@@ -24,12 +24,12 @@ def listfavorite():
     email = request.args.get("user")
     return songs.listFavorites(email)
 
-@songs_routes.route("/songs/searchGender", methods=["POST"])
+@songs_routes.route("/songs/searchGender", methods=["GET"])
 def searchGender():
     email = request.args.get("user")
     return songs.searchGender(email)
 
-@songs_routes.route("/songs/searchTitle", methods=["POST"])
+@songs_routes.route("/songs/searchTitle", methods=["GET"])
 def searchTitle():
     email = request.args.get("user")
     return songs.searchTitle(email)
