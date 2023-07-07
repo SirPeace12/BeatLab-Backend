@@ -38,4 +38,3 @@ def searchTitle():
 def play():
     email = request.args.get("user")
     return songs.play(email)
-
