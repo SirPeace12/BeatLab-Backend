@@ -71,7 +71,7 @@ def upload():
 
 def getAllSongs():
     userData = {
-        "user" :request.files['user'],
+        "user" :request.json['user'],
     }
     songs = Song.objects(user=userData['user'])
     songList = []
