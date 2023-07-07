@@ -2,6 +2,10 @@ from flask import jsonify, redirect, request, url_for
 from flask_mail import Mail, Message
 from flask import session
 from config import db, app
+from authentication.api_v1_0.userModel import Users
+import secrets
+import string
+
 import secrets
 
 app.config.from_pyfile('config.py')
@@ -9,7 +13,7 @@ app.config.from_pyfile('config.py')
 mail = Mail(app)
 
 def registered(userData):
-    return False if userData == None else True 
+    return False if not len(userData)  else True 
 
 def validate(data, dbData):
     return data == dbData
@@ -36,14 +40,14 @@ def login():
         password = userData['password'] 
         email = userData['email']
 
-        dbSearch = db.find_one({'email':email})
+        dbSearch = Users.objects(email = email).first()
 
-        if (dbSearch is None):
-            dbEmail = None
-            dbPassword = None
+        if (not registered(dbSearch)):
+            dbEmail = []
+            dbPassword = []
         else:
-            dbEmail = dbSearch["email"]
-            dbPassword = dbSearch["password"]
+            dbEmail = dbSearch.email
+            dbPassword = dbSearch.password
 
         if (not registered(dbEmail)):
             return jsonify({"LoginFailed" : "Usuario no registrado" })
@@ -53,12 +57,10 @@ def login():
     
         if (registered(dbEmail) and validate(password, dbPassword) and validate(email, dbEmail)):
             user = {
-            'nameUser' : dbSearch['nameUser'],
-            'lastNameUser' : dbSearch['lastNameUser'],
-            'email' : dbSearch['email']
+            'nameUser' : dbSearch.nameUser,
+            'lastNameUser' : dbSearch.lastNameUser,
+            'email' : dbSearch.email
             }
-            session['user'] = dbSearch['email']
-            print(session)
             
             return jsonify({"LoginSuccessfull" : user})
         else: 
@@ -113,6 +115,15 @@ def sendWelcomeEmail(emailUser):
     </html>
     '''
     mail.send(msg)
+
+def creeateUser(userData):
+    user = Users(nameUser = userData["nameUser"],
+                lastNameUser = userData["lastNameUser"],
+                email = userData["email"],
+                password = userData["password"],
+                phone = userData["phone"],
+                )
+    user.save()
     
 def register():
     userData = {
@@ -120,39 +131,38 @@ def register():
         "lastNameUser": request.json["lastNameUser"],
         "email": request.json["email"],
         "password": request.json["password"],
-        "phone": request.json["phone"],
-        "state":True
+        "phone": request.json["phone"]
     }
-    dbSearch = db.find_one({'email':userData['email']})
-    
+
+    dbSearch = Users.objects(email = userData["email"])
+
     if (not registered(dbSearch)):
-        db.insert_one(userData)
+        creeateUser(userData)
         sendWelcomeEmail(userData['email'])
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })
-    
-def logout():
-    session.clear()
-    return jsonify({"Logout": "UserLogout"})
+
+def generateToken(length):
+    characters = string.digits
+    token = ''.join(secrets.choice(characters) for _ in range(length))
+    return token
 
 def sendRecuperationEmail():
     userData = {
-        "email":request.json["email"]
+        "email": request.json["email"],
     }
 
     emailUser = userData["email"]
 
-    # token1 = random(000000 , 999999)
-
-    token = secrets.token_hex(16)
-    reset_url = url_for('auth.resetPassword', token=token, _external=True)
+    token = generateToken(6)
     msg = Message('Recuperación de contraseña', recipients=[emailUser])
-    msg.body = f'Hola, has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para restablecerla: {reset_url}'
+    msg.body = f'Hola, has solicitado restablecer tu contraseña. Su codigo de recuperacion es: {token}'
     mail.send(msg)
-
-    db.update_one({"email" : userData["email"]}, {'$set': {"resetToken": token}})
-    return jsonify({"RecuperationEmail": "Email Sent Successfull"})
+    user = Users.objects(email = emailUser).first()
+    user.resetToken = token
+    user.save()
+    return jsonify({"RecuperationEmail": "Email Sent Successfully"})
 
 def savePassword(userData, tokenUser):
 
@@ -161,38 +171,38 @@ def savePassword(userData, tokenUser):
 
     if (tokenUser):
         if(newPassword == confirm_password):
-            db.update_one({'resetToken': tokenUser["token"]}, {'$set': {'password': newPassword}})
+            user = Users.objects(resetToken = tokenUser).first()
+            user.password = newPassword
+            user.resetToken = ""
+            user.save()
         else:
             return jsonify ({"resetPassword": "Passwords Do Not Match"})
 
     return jsonify ({"resetPassword": "Change Password Successfull"})
 
-def resetPassword(token):
-    tokenUser = db.find_one({'resetToken': token})
-    if request.method == 'POST':
-        userData = {
-            "newPassword":request.json["newPassword"],
-            "confirmPassword":request.json["confirmPassword"]
-        }
-        savePassword(userData, tokenUser)
-        return jsonify ({"resetPassword": "Change Password Successfull"})
-    
-    if (tokenUser):
-        return redirect("http://localhost:5173/", code=302)
-    return jsonify ({"resetPassword": "ChangePasswordFailed"})
-
 def confirmToken():
+    tokenData = {
+        "token" : request.json["token"],
+    }
+    token = tokenData["token"]
+
+    tokenUser = Users.objects(resetToken=token)
+
+    if (registered(tokenUser)):
+        return jsonify ({"Correct Token" : token})
+    else:
+        return jsonify ({"token" : "Incorrect Token"})
+
+def resetPassword(token):
+    
     userData = {
-            "token":request.json["token"]
+        "newPassword":request.json["newPassword"],
+        "confirmPassword":request.json["confirmPassword"]
         }
     
-    token = userData["token"]
+    savePassword(userData,token)
 
-    user = db.find_one({ "resetToken": token })
-
-    print(user)
-
-    return jsonify ({"resetPassword": "ChangePasswordFailed"})
-
+    return jsonify({"resetPassword" : "Change Password Successfull"})
+        
 
     
