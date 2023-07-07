@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 import authentication.api_v1_0.views  as auth
 
 auth_routes = Blueprint("auth", __name__)
@@ -30,8 +30,9 @@ def logout():
 def sendRecuperationEmail():
     return auth.sendRecuperationEmail()
 
-@auth_routes.route('/resetPassword/<token>', methods=['GET', 'POST'])
-def resetPassword(token):
+@auth_routes.route("/resetPassword", methods=['POST'])
+def resetPassword():
+    token = request.args.get("token")
     return auth.resetPassword(token)
 
 @auth_routes.route("/confirmToken", methods=["POST"])

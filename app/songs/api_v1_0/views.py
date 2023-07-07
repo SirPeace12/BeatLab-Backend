@@ -37,7 +37,6 @@ def generateSongURL(file):
     
 def createSongDataBase(songData, user, songURL,imageSongURL):
     userEmail = user
-    print(userEmail)
     song =Song(title = songData["title"],
           artist = songData["artist"],
           gender = songData["gender"],
