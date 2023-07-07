@@ -70,10 +70,11 @@ def upload():
     return jsonify({"Upload": "Successfull"})
 
 def getAllSongs():
-    songs = Song.objects(user=session.get('user'))
-    print (session.get('user'))
+    userData = {
+        "user" :request.files['user'],
+    }
+    songs = Song.objects(user=userData['user'])
     songList = []
-    # print(session)
     for song in songs:
         songData = {
             'id' : str(song.id),
@@ -83,6 +84,7 @@ def getAllSongs():
             'favorite' : song.favorite,
             'songURL' : song.songURL,
             'imageSongURL' : song.imageSongURL,
+            'user' : song.user,
         }
         songList.append(songData)
 
