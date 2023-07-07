@@ -57,7 +57,9 @@ def login():
             'lastNameUser' : dbSearch['lastNameUser'],
             'email' : dbSearch['email']
             }
-            session['user'] = email
+            session['user'] = dbSearch['email']
+            print(session)
+            
             return jsonify({"LoginSuccessfull" : user})
         else: 
             return jsonify({"LoginFailed" : "Login Failed" })
