@@ -71,7 +71,7 @@ def upload():
 
 def getAllSongs(email):
     userData = email
-    songs = Song.objects(user=userData['user'])
+    songs = Song.objects(user=userData)
     songList = []
     for song in songs:
         songData = {
