@@ -15,6 +15,8 @@ def validate(data, dbData):
     return data == dbData
 
 def login():
+    print("11111")
+    
     userData = {
         "email": request.json["email"],
         "password": request.json["password"],
@@ -25,7 +27,6 @@ def login():
 
     dbSearch = db.find_one({'email':email})
 
-    
 
     if (dbSearch is None):
         dbEmail = None
@@ -47,7 +48,10 @@ def login():
         'lastNameUser' : dbSearch['lastNameUser'],
         'email' : dbSearch['email']
         }
-        session['user'] = email
+        print(user)
+        print("-----------------------")
+        session['user'] = user["email"]
+        print(session.get('user'))
         return jsonify({"LoginSuccessfull" : user})
     else: 
         return jsonify({"LoginFailed" : "Login Failed" })

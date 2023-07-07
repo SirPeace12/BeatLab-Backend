@@ -70,6 +70,7 @@ def upload():
 def getAllSongs():
     songs = Song.objects(user=session.get('user'))
     songList = []
+    # print(session)
     for song in songs:
         songData = {
             'id' : str(song.id),
