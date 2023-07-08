@@ -191,7 +191,6 @@ def updateArtist(email):
     }
 
     song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
-    print(song)
     if exist(song):
         song.artist = songData["newArtist"]
         song.save()
@@ -199,6 +198,19 @@ def updateArtist(email):
     else:
         return jsonify({"updateArtist" : "Update Artist Failed"})
 
+def updateTitle(email):
+    songData = {
+        "artist" : request.json["artist"],
+        "title" : request.json["title"],
+        "newTitle" : request.json["newTitle"]
+    }
 
+    song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
+    if exist(song):
+        song.title = songData["newTitle"]
+        song.save()
+        return jsonify({"updateTitle" : "Update Title Successful"})
+    else:
+        return jsonify({"updateTitle" : "Update Title Failed"})
 
 
