@@ -227,3 +227,8 @@ def updateGender(email):
         return jsonify({"updateGender" : "Update Gender Successful"})
     else:
         return jsonify({"updateGender" : "Update Gender Failed"})
+
+def deleteSong(email):
+    songData = {
+        
+    }
