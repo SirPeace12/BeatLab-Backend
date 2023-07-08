@@ -48,3 +48,8 @@ def updateArtist():
 def updateTitle():
     email = request.args.get("user")
     return songs.updateTitle(email)
+
+@songs_routes.route("/songs/updateGender", methods=["PATCH"])
+def updateGender():
+    email = request.args.get("user")
+    return songs.updateGender(email)
