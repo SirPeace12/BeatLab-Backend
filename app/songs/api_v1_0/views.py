@@ -24,7 +24,6 @@ def generatePhotoSongURL(file):
         expiry=datetime.utcnow() + timedelta(hours=720))  # Expiración del token de SAS )
     return f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME_IMAGES_SONG}/{file.filename}?{sas_token}"
 
-
 def generateSongURL(file):
     sas_token = generate_blob_sas(
         account_name = blob_service_client.account_name,
