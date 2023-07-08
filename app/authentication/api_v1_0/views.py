@@ -161,7 +161,7 @@ def sendRecuperationEmail():
     mail.send(msg)
     user = Users.objects(email = emailUser).first()
     if (user == None):
-        return jsonify({"RecuperationEmail": "Email Sent Successfully"})
+        return jsonify({"RecuperationEmail": "Email Sent Failed"})
     user.resetToken = token
     user.save()
     return jsonify({"RecuperationEmail": "Email Sent Successfully"})
