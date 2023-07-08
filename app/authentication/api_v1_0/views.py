@@ -248,7 +248,7 @@ def uploadPhoto(email):
 
 def updateName(email):
     userData = {
-        "name":  request.json['name'],
+        "name":  request.json["name"],
     }
 
     user = Users.objects(email = email).first()
