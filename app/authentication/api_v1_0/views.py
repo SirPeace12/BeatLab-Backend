@@ -36,7 +36,7 @@ def savePhotoDataBase(userData, email, imageUserURL):
     user.save()
 
 def registered(userData):
-    return False if not len(userData)  else True 
+    return False if not userData else True 
 
 def validate(data, dbData):
     return data == dbData
@@ -66,8 +66,8 @@ def login():
         dbSearch = Users.objects(email = email).first()
 
         if (not registered(dbSearch)):
-            dbEmail = []
-            dbPassword = []
+            dbEmail = None
+            dbPassword = None
         else:
             dbEmail = dbSearch.email
             dbPassword = dbSearch.password
@@ -82,7 +82,8 @@ def login():
             user = {
             'nameUser' : dbSearch.nameUser,
             'lastNameUser' : dbSearch.lastNameUser,
-            'email' : dbSearch.email
+            'email' : dbSearch.email,
+            'userPhotoURL' : dbSearch.userPhotoURL,
             }
             
             return jsonify({"LoginSuccessfull" : user})
@@ -244,3 +245,14 @@ def uploadPhoto(email):
     savePhotoDataBase(userData,email ,imageUserURL)
 
     return jsonify({'PhotoUser' : "Photo Uploaded Successful"})
+
+def updateName(email):
+    userData = {
+        "name":  request.json['name'],
+    }
+
+    user = Users.objects(email = email).first()
+    user.nameUser = userData["name"]
+    user.save()
+
+    return jsonify({"updateName" : "updateName Successful"})

@@ -3,17 +3,6 @@ import authentication.api_v1_0.views  as auth
 
 auth_routes = Blueprint("auth", __name__)
 
-
-
-@auth_routes.after_request
-def add_headers(response):
-    response.headers['Content-Type'] = 'application/json'  # Configura el Content-Type como application/json
-    return auth.add_cors_headers(response)
-
-@auth_routes.route("/login", methods=["OPTIONS"])
-def handle_options_request():
-    return auth.handle_options_request()
-
 @auth_routes.route("/login", methods=["POST"])
 def login():
     return auth.login()
@@ -35,8 +24,13 @@ def resetPassword():
     token = request.args.get("token")
     return auth.resetPassword(token)
 
-@auth_routes.route("/uploadPhoto", methods=['POST'])
+@auth_routes.route("/uploadPhoto", methods=['PUT'])
 def uploadPhoto():
     email = request.args.get("user")
     return auth.uploadPhoto(email)
+
+@auth_routes.route("/updateName", methods=['PUT'])
+def updateName():
+    email = request.args.get("user")
+    return auth.updateName(email)
 
