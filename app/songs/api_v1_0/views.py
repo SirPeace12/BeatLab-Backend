@@ -178,3 +178,27 @@ def play(email):
     songURL = song.songURL
 
     return jsonify({"PlaySong" : songURL})
+
+def exist(data):
+    return True if not data == None else False 
+
+def updateArtist(email):
+    songData = {
+        "artist" : request.json["artist"],
+        "title" : request.json["title"],
+        "newArtist" : request.json["newArtist"]
+
+    }
+
+    song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
+    print(song)
+    if exist(song):
+        song.artist = songData["newArtist"]
+        song.save()
+        return jsonify({"updateArtist" : "Update Artist Successful"})
+    else:
+        return jsonify({"updateArtist" : "Update Artist Failed"})
+
+
+
+

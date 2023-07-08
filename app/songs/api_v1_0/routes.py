@@ -19,8 +19,8 @@ def favorite():
     email = request.args.get("user")
     return songs.favorite(email)
 
-@songs_routes.route("/songs/listfavorite", methods=["GET"])
-def listfavorite():
+@songs_routes.route("/songs/listFavorite", methods=["GET"])
+def listFavorite():
     email = request.args.get("user")
     return songs.listFavorites(email)
 
@@ -38,3 +38,8 @@ def searchTitle():
 def play():
     email = request.args.get("user")
     return songs.play(email)
+
+@songs_routes.route("/songs/updateArtist", methods=["PATCH"])
+def updateArtist():
+    email = request.args.get("user")
+    return songs.updateArtist(email)
