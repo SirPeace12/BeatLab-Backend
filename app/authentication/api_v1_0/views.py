@@ -160,6 +160,8 @@ def sendRecuperationEmail():
     msg.body = f'Hola, has solicitado restablecer tu contraseña. Su codigo de recuperacion es: {token}'
     mail.send(msg)
     user = Users.objects(email = emailUser).first()
+    if (user == None):
+        return jsonify({"RecuperationEmail": "Email Sent Successfully"})
     user.resetToken = token
     user.save()
     return jsonify({"RecuperationEmail": "Email Sent Successfully"})
