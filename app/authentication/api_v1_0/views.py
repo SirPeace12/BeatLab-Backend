@@ -30,7 +30,7 @@ def generatePhotoSongURL(file):
         expiry=datetime.utcnow() + timedelta(hours=720))  # Expiración del token de SAS )
     return f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME_IMAGES_USER}/{file.filename}?{sas_token}"
 
-def savePhotoDataBase(userData, email, imageUserURL):
+def savePhotoDataBase(email, imageUserURL):
     user = Users.objects(email = email).first()
     user.userPhotoURL = imageUserURL
     user.save()
@@ -43,7 +43,7 @@ def validate(data, dbData):
 
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'  # Permitir todas las solicitudes de origen cruzado
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'  # Métodos permitidos
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE, PATCH'  # Métodos permitidos
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # Encabezados permitidos
     return response
 
