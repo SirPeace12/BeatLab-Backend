@@ -35,3 +35,8 @@ def resetPassword():
     token = request.args.get("token")
     return auth.resetPassword(token)
 
+@auth_routes.route("/uploadPhoto", methods=['POST'])
+def uploadPhoto():
+    email = request.args.get("user")
+    return auth.uploadPhoto(email)
+

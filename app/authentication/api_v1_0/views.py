@@ -3,14 +3,23 @@ from flask_mail import Mail, Message
 from flask import session
 from config import db, app
 from authentication.api_v1_0.userModel import Users
+from config import blob_service_client, container_client_images_user, CONTAINER_NAME_IMAGES_USER
 import secrets
 import string
+import uuid
 
-import secrets
+
 
 app.config.from_pyfile('config.py')
 
 mail = Mail(app)
+
+
+def uploadSongServer(file):
+    container_client_images_user.get_blob_client(file.filename).upload_blob(file)
+
+def newName(filename):
+    return f"{str(uuid.uuid4())}_{filename}"
 
 def registered(userData):
     return False if not len(userData)  else True 
@@ -204,5 +213,7 @@ def resetPassword(token):
 
     return jsonify({"resetPassword" : "Change Password Successfull"})
         
+def uploadPhoto(email):
+
 
     
