@@ -227,3 +227,14 @@ def updateGender(email):
         return jsonify({"updateGender" : "Update Gender Successful"})
     else:
         return jsonify({"updateGender" : "Update Gender Failed"})
+
+def deleteSong(email):
+    songData = {
+        "title" : request.json["title"]
+    }
+
+    song = Song.objects(user = email, title = songData["title"]).first()
+
+    song.delete()
+
+    return jsonify({"DeleteSong": "Song deleted successfully"})

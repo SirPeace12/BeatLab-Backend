@@ -53,3 +53,8 @@ def updateTitle():
 def updateGender():
     email = request.args.get("user")
     return songs.updateGender(email)
+
+@songs_routes.route("/songs/deleteSong", methods=["DELETE"])
+def deleteSong():
+    email = request.args.get("user")
+    return songs.deleteSong(email)
