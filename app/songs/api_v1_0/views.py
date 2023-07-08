@@ -1,7 +1,7 @@
 from flask import request,jsonify, session
 from azure.storage.blob import  BlobSasPermissions, generate_blob_sas
 from datetime import datetime, timedelta
-from config import container_client_song,container_client_images_song, blob_service_client, CONTAINER_NAME_SONG, CONTAINER_NAME_IMAGES_SONG
+from config import container_client_song, container_client_images_song, blob_service_client, CONTAINER_NAME_SONG, CONTAINER_NAME_IMAGES_SONG
 from songs.api_v1_0.songModels import Song
 import uuid
 
@@ -23,7 +23,6 @@ def generatePhotoSongURL(file):
         permission = BlobSasPermissions(read=True),  # Permiso para leer el archivo
         expiry=datetime.utcnow() + timedelta(hours=720))  # Expiración del token de SAS )
     return f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME_IMAGES_SONG}/{file.filename}?{sas_token}"
-
 
 def generateSongURL(file):
     sas_token = generate_blob_sas(
