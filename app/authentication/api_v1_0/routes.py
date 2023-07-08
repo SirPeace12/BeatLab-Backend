@@ -29,7 +29,7 @@ def uploadPhoto():
     email = request.args.get("user")
     return auth.uploadPhoto(email)
 
-@auth_routes.route("/updateName", methods=['PUT'])
+@auth_routes.route("/updateName", methods=['PATCH'])
 def updateName():
     email = request.args.get("user")
     return auth.updateName(email)

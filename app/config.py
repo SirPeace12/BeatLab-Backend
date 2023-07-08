@@ -48,4 +48,4 @@ MAIL_DEFAULT_SENDER = 'miguelangelpazvelasco1@gmail.com'
 
 urlBase = "http://localhost:5173/"
 
-CORS(app, methods=['GET', 'POST', 'PUT', 'DELETE'], supports_credentials=True, origins="*", allow_headers=["Content-Type"])
+CORS(app, methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], supports_credentials=True, origins="*", allow_headers=["Content-Type"])

@@ -14,7 +14,7 @@ def upload():
     email = request.args.get("user")
     return songs.upload(email)
 
-@songs_routes.route("/songs/favorite", methods=["POST"])
+@songs_routes.route("/songs/favorite", methods=["PATCH"])
 def favorite():
     email = request.args.get("user")
     return songs.favorite(email)
@@ -43,3 +43,4 @@ def play():
 def updateArtist():
     email = request.args.get("user")
     return songs.updateArtist(email)
+
