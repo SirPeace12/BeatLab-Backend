@@ -213,4 +213,17 @@ def updateTitle(email):
     else:
         return jsonify({"updateTitle" : "Update Title Failed"})
 
+def updateGender(email):
+    songData = {
+        "artist" : request.json["artist"],
+        "title" : request.json["title"],
+        "newGender" : request.json["newGender"]
+    }
 
+    song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
+    if exist(song):
+        song.gender = songData["newGender"]
+        song.save()
+        return jsonify({"updateGender" : "Update Gender Successful"})
+    else:
+        return jsonify({"updateGender" : "Update Gender Failed"})
