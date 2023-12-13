@@ -6,11 +6,14 @@ from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_b
 from flask_cloudy import Storage
 import mongoengine
 
+from flask_redis import FlaskRedis
+
+
 # inicializacion de la aplicacion
 app = Flask(__name__)
 
 # Conexion al servidor de las canciones en Microsoft BLOB storage
-CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=beatlab;AccountKey=wxtVr/zpbjPkihy/ysj528e4Af7eN5lpDvhNbBhmJyuG9kjzLlitGmlH/Mn9pkvGSMmpNchi/ygV+AStI1V2AQ==;EndpointSuffix=core.windows.net"
+CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=beatlabsql;AccountKey=JpYdCBjz//Uh4hTMEUjy8oIw3/MgyJWa+bhBt1quQtKDVKJpFw98AgUMuOT7xQbKj6o9zrO+Iqbw+AStlum3Qg==;EndpointSuffix=core.windows.net"
 CONTAINER_NAME_SONG = "songs"
 CONTAINER_NAME_IMAGES_SONG = "imagesong"
 CONTAINER_NAME_IMAGES_USER = "imageuser"
@@ -31,6 +34,9 @@ dbSongs = mongo.db.songs
 db.create_index('email', unique=True)
 mongoengine.connect('BeatLab', host='localhost', port=27017)
 
+# Conexion a redis
+app.config['REDIS_URL'] = "redis://default:oxWSVaw6SAJadsrc7SqN2aiUrXsGvM2C@redis-15385.c326.us-east-1-3.ec2.cloud.redislabs.com:15385"
+redis_client = FlaskRedis(app)
 
 # Configuracion para enviar el correo de recuperacion
 app.config['SESSION_TYPE'] = 'filesystem'

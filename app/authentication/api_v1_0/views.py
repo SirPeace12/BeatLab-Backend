@@ -140,13 +140,19 @@ def sendWelcomeEmail(emailUser):
     '''
     mail.send(msg)
 
-def creeateUser(userData):
-    user = Users(nameUser = userData["nameUser"],
-                lastNameUser = userData["lastNameUser"],
-                email = userData["email"],
-                password = userData["password"],
-                phone = userData["phone"],
-                )
+def creeateUser(user_data):
+    user = Users(
+        nameUser=user_data["nameUser"],
+        lastNameUser=user_data["lastNameUser"],
+        email=user_data["email"],
+        password=user_data["password"],
+        phone=user_data["phone"],
+        state=True,  # Puedes ajustar el valor predeterminado según tus necesidades
+        resetToken="",  # Puedes ajustar el valor predeterminado según tus necesidades
+        userPhotoURL="",  # Puedes ajustar el valor predeterminado según tus necesidades
+        playlist_songs=[],  # Lista vacía, ya que es un nuevo usuario
+        songs=[]  # Lista vacía, ya que es un nuevo usuario
+    )
     user.save()
     
 def register():
@@ -162,7 +168,7 @@ def register():
 
     if (not registered(dbSearch)):
         creeateUser(userData)
-        sendWelcomeEmail(userData['email'])
+        # sendWelcomeEmail(userData['email'])
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })

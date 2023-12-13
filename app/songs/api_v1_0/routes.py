@@ -14,20 +14,14 @@ def upload():
     email = request.args.get("user")
     return songs.upload(email)
 
-@songs_routes.route("/songs/favorite", methods=["PATCH"])
-def favorite():
-    email = request.args.get("user")
-    return songs.favorite(email)
+@songs_routes.route("/songs/genre", methods=["POST"])
+def createGenre():
+    return songs.createGenre()
 
-@songs_routes.route("/songs/listFavorite", methods=["GET"])
-def listFavorite():
+@songs_routes.route("/songs/searchGenres", methods=["GET"])
+def searchGenres():
     email = request.args.get("user")
-    return songs.listFavorites(email)
-
-@songs_routes.route("/songs/searchGender", methods=["GET"])
-def searchGender():
-    email = request.args.get("user")
-    return songs.searchGender(email)
+    return songs.searchGenres(email)
 
 @songs_routes.route("/songs/searchTitle", methods=["GET"])
 def searchTitle():
@@ -38,6 +32,26 @@ def searchTitle():
 def play():
     email = request.args.get("user")
     return songs.play(email)
+
+@songs_routes.route("/songs/playlist", methods=["POST"])
+def createPlayList():
+    email = request.args.get("user")
+    return songs.createPlayList(email)
+
+@songs_routes.route("/songs/addSong", methods=["POST"])
+def addSong():
+    email = request.args.get("user")
+    return songs.addSong(email)
+
+@songs_routes.route("/songs/listFavorite", methods=["GET"])
+def listFavorite():
+    email = request.args.get("user")
+    return songs.listFavorites(email)
+
+@songs_routes.route("/songs/favorite", methods=["PATCH"])
+def favorite():
+    email = request.args.get("user")
+    return songs.favorite(email)
 
 @songs_routes.route("/songs/updateArtist", methods=["PATCH"])
 def updateArtist():
