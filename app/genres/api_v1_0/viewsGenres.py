@@ -144,11 +144,15 @@ def getGenreSongs():
         'id_genre' : request.json["id_genre"],
     }
     genre = Genre.objects(id = songData['id_genre']).first()
-    key = f'TotalUserSongs:{genre.description}'
+    if(genre):
+        key = f'TotalSongsPerGenre:{genre.description}'
 
-    redis_client.set(key, json.dumps(len(genre.songs)))
+        redis_client.set(key, json.dumps(len(genre.songs)))
 
-    return jsonify({"Total Sogs Per Genre" : len(genre.songs) })
+        return jsonify({"Total Sogs Per Genre" : len(genre.songs) })
+    else:
+        return jsonify({"message" : "Genre Not Found"})
+
 
 def getGenreSongsRedis():
     songData = {
@@ -157,8 +161,12 @@ def getGenreSongsRedis():
     description =songData['description']
     key = f'TotalUserSongs:{description}'
     totalSongs = redis_client.get(key)
-    songs_str = totalSongs.decode('utf-8')
-    return jsonify({"Total Sogs Per Genre" : int(songs_str) })
+    if totalSongs:
+        songs_str = totalSongs.decode('utf-8')
+        return jsonify({"Total Sogs Per Genre" : int(songs_str) })
+    else:
+        return jsonify({"messge" : "Description Not Found" })
+
 
 
 def totalSongPerGenre():

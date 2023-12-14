@@ -113,17 +113,22 @@ def upload(email):
 def getAllSongs(email):
     songs = Users.objects(email=email).first().songs
     songList = []
-    for song in songs:
-        songData = {
-            'id_song' : str(song._id),
-            'title' : song.title,
-            'artist' : song.artist,
-            'genre' : [{"id_genre": str(genre._id), "description": genre.description} for genre in song.genres],
-            'songURL' : song.songURL,
-            'imageSongURL' : song.imageSongURL
-        }
-        songList.append(songData)
-    return jsonify({"SongsAll" : songList })
+    if songs:
+        for song in songs:
+            songData = {
+                'id_song' : str(song._id),
+                'title' : song.title,
+                'artist' : song.artist,
+                'genre' : [{"id_genre": str(genre._id), "description": genre.description} for genre in song.genres],
+                'songURL' : song.songURL,
+                'imageSongURL' : song.imageSongURL
+            }
+            songList.append(songData)
+        return jsonify({"SongsAll" : songList })
+    else:
+        return jsonify({"message" : "User Not Found" })
+
+    
 
 def getAllSongsRedis(email):
     songs_bytes = redis_client.get(email)
@@ -163,14 +168,18 @@ def play(email):
         "title" : request.json["title"]
     }
     user = Users.objects(email=email).first()
+    if user :
 
-    song = next((s for s in user.songs if s.title == songData['title']), None)
+        song = next((s for s in user.songs if s.title == songData['title']), None)
 
-    if song:
-        song_url = song.songURL
-        return jsonify({"PlaySong": song_url})
+        if song:
+            song_url = song.songURL
+            return jsonify({"PlaySong": song_url})
+        else:
+            return jsonify({"message": "Song not found"})
     else:
-        return jsonify({"error": "Song not found"})
+            return jsonify({"message": "User not found"})
+
 
 def listFavorites(email):
     user = email
@@ -292,12 +301,16 @@ def updateArtist(email):
     return jsonify({"updateGender" : "Update Gender Successful"})
     
 def totalUserSongs(email):
-    songs = len(Users.objects(email=email).first().songs)
-    key = f'TotalUserSongs:{email}'
-    
-    redis_client.set(key, songs)
+    user = Users.objects(email=email).first()
+    if user :
+        totalSongs= len(user.songs)
+        key = f'TotalUserSongs:{email}'
+        
+        redis_client.set(key, totalSongs)
 
-    return jsonify({"TotalUserSongs": songs})
+        return jsonify({"TotalUserSongs": totalSongs})
+    else:
+        return jsonify({"message": "User Not Found"})
 
 def totalUserSongsRedis(email):
     key = f'TotalUserSongs:{email}'
