@@ -4,7 +4,9 @@ from flask_mail import Mail, Message
 from azure.storage.blob import  BlobSasPermissions, generate_blob_sas
 from flask import session
 from config import db, app
-from authentication.api_v1_0.userModel import Users
+# from authentication.api_v1_0.userModel import Users
+from users.api_v1_0.userModel import Users
+
 from config import blob_service_client, container_client_images_user, CONTAINER_NAME_IMAGES_USER
 import secrets
 import string
