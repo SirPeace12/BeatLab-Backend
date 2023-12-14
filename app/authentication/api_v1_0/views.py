@@ -3,8 +3,10 @@ from flask import jsonify, redirect, request, url_for
 from flask_mail import Mail, Message
 from azure.storage.blob import  BlobSasPermissions, generate_blob_sas
 from flask import session
-from config import db, app
-from authentication.api_v1_0.userModel import Users
+from config import app
+# from authentication.api_v1_0.userModel import Users
+from users.api_v1_0.userModel import Users
+
 from config import blob_service_client, container_client_images_user, CONTAINER_NAME_IMAGES_USER
 import secrets
 import string
@@ -140,13 +142,19 @@ def sendWelcomeEmail(emailUser):
     '''
     mail.send(msg)
 
-def creeateUser(userData):
-    user = Users(nameUser = userData["nameUser"],
-                lastNameUser = userData["lastNameUser"],
-                email = userData["email"],
-                password = userData["password"],
-                phone = userData["phone"],
-                )
+def creeateUser(user_data):
+    user = Users(
+        nameUser=user_data["nameUser"],
+        lastNameUser=user_data["lastNameUser"],
+        email=user_data["email"],
+        password=user_data["password"],
+        phone=user_data["phone"],
+        state=True,  # Puedes ajustar el valor predeterminado según tus necesidades
+        resetToken="",  # Puedes ajustar el valor predeterminado según tus necesidades
+        userPhotoURL="",  # Puedes ajustar el valor predeterminado según tus necesidades
+        playlist_songs=[],  # Lista vacía, ya que es un nuevo usuario
+        songs=[]  # Lista vacía, ya que es un nuevo usuario
+    )
     user.save()
     
 def register():
@@ -162,7 +170,7 @@ def register():
 
     if (not registered(dbSearch)):
         creeateUser(userData)
-        sendWelcomeEmail(userData['email'])
+        # sendWelcomeEmail(userData['email'])
         return jsonify({"Register" : "Register Successful" })
     else:
         return jsonify({"Register" : "Registered User" })

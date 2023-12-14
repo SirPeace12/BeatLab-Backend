@@ -1,9 +1,29 @@
 from flask import request,jsonify, session
 from azure.storage.blob import  BlobSasPermissions, generate_blob_sas
 from datetime import datetime, timedelta
-from config import container_client_song, container_client_images_song, blob_service_client, CONTAINER_NAME_SONG, CONTAINER_NAME_IMAGES_SONG
-from songs.api_v1_0.songModels import Song
+from config import container_client_song, container_client_images_song, blob_service_client, CONTAINER_NAME_SONG, CONTAINER_NAME_IMAGES_SONG, redis_client
+
+from songs.api_v1_0.songModels import Song, CreateGenre, CreateUser
+# Users
+from users.api_v1_0.userModel import Users, CreateSongUser, CreatePlayListUser
+from users.api_v1_0.viewsUser import *
+
+# Genres
+from genres.api_v1_0.genreModels import Genre, CreateSong
+from genres.api_v1_0.viewsGenres import *
+
+# playList
+from play_list.api_v1_0.playListModel import PlaylistSong, userPlayList, CreateSongPlayList
+from play_list.api_v1_0.viewsPlayList import *
+
+
+
+from bson import ObjectId
+import json
+
 import uuid
+
+# ------------------- SONGS -------------
 
 def uploadSongServer(file):
     container_client_song.get_blob_client(file.filename).upload_blob(file)
@@ -32,24 +52,48 @@ def generateSongURL(file):
         account_key = blob_service_client.credential.account_key,
         permission = BlobSasPermissions(read=True),  # Permiso para leer el archivo
         expiry=datetime.utcnow() + timedelta(hours=720))  # Expiración del token de SAS )
-    return f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME_SONG}/{file.filename}?{sas_token}"
-    
+    return f"https://{blob_service_client.account_name}.blob.core.windows.net/{CONTAINER_NAME_SONG}/{file.filename}?sp=r&st=2023-12-14T04:32:08Z&se=2023-12-14T12:32:08Z&spr=https&sv=2022-11-02&sr=c&sig=Mfs2LyJOBL3D%2BTBxFQ3jVqIB%2Fu0Biz4OwmHpE87hjbc%3D"
+
+def songDataRedis(email):
+    songs = Users.objects(email = email).first().songs
+    song_list = []
+
+    for song in songs:
+        song_data = {
+            'id_song': str(song._id),
+            'title': song.title,
+            'artist': song.artist,
+            'genres': [{'id_gender': str(genre._id), 'description': genre.description} for genre in song.genres],
+            'songURL': song.songURL,
+            'imageSongURL': song.imageSongURL,
+        }
+        song_list.append(song_data)
+    redis_client.set(email, json.dumps(song_list))
+
 def createSongDataBase(songData, user, songURL,imageSongURL):
-    userEmail = user
+    genre = Genre.objects(id=ObjectId(songData["genre"])).first()
+
+    users = Users.objects(email=user).first()
+
     song =Song(title = songData["title"],
           artist = songData["artist"],
-          gender = songData["gender"],
+          genres = [CreateGenre(_id=genre.id, description = genre.description)],
           songURL = songURL,
           imageSongURL = imageSongURL,
-          user = userEmail,
+          user = CreateUser(_id=users.id, nameUser = users.nameUser, lastNameUser = users.lastNameUser, email = users.email, phone = users.phone),
           )
     song.save()
+    
+    genreUpdate(songData, song)
+    userUpdate(users, song)
+    songDataRedis(user)
+    redis_client.set('totalSong', len(Song.objects.all()))
 
 def upload(email):
     songData = {
         "title": request.form.get('title'),
         "artist": request.form.get('artist'),
-        "gender": request.form.get('gender'),
+        "genre": request.form.get('genre'),
         "fileSong":  request.files['fileSong'],
         "fileImage":  request.files['fileImage'],
     }
@@ -57,7 +101,7 @@ def upload(email):
     songData["fileImage"].filename = newName(songData["fileImage"].filename)
 
     uploadSongServer(songData["fileSong"])
-    uploadSongImagesServer(songData["fileImage"])
+    # uploadSongImagesServer(songData["fileImage"])
 
     songURL = generateSongURL(songData["fileSong"])
     imageSongURL = generatePhotoSongURL(songData["fileImage"])
@@ -67,23 +111,75 @@ def upload(email):
     return jsonify({"Upload": "Successfull"})
 
 def getAllSongs(email):
-    userData = email
-    songs = Song.objects(user=userData)
+    songs = Users.objects(email=email).first().songs
     songList = []
-    for song in songs:
-        songData = {
-            'id' : str(song.id),
-            'title' : song.title,
-            'artist' : song.artist,
-            'gender' : song.gender,
-            'favorite' : song.favorite,
-            'songURL' : song.songURL,
-            'imageSongURL' : song.imageSongURL,
-            'user' : song.user,
-        }
-        songList.append(songData)
+    if songs:
+        for song in songs:
+            songData = {
+                'id_song' : str(song._id),
+                'title' : song.title,
+                'artist' : song.artist,
+                'genre' : [{"id_genre": str(genre._id), "description": genre.description} for genre in song.genres],
+                'songURL' : song.songURL,
+                'imageSongURL' : song.imageSongURL
+            }
+            songList.append(songData)
+        return jsonify({"SongsAll" : songList })
+    else:
+        return jsonify({"message" : "User Not Found" })
 
-    return jsonify({"SongsAll" : songList })
+    
+
+def getAllSongsRedis(email):
+    songs_bytes = redis_client.get(email)
+
+    # Decodificar los bytes a una cadena
+    songs_str = songs_bytes.decode('utf-8')
+
+    # Cargar la cadena como objeto JSON
+    songs = json.loads(songs_str)
+
+    return jsonify({"SongsAll": songs})
+
+def searchTitle(email):
+    songData = {
+        'title': request.json["title"],
+    }
+
+    songs = Song.objects(title = songData["title"])
+    songList = []
+
+    for song in songs:
+        if song.user.email == email:
+            songData = {
+                'id' : str(song.id),
+                'title' : song.title,
+                'artist' : song.artist,
+                'genres' : [{"id_genre": str(genre._id), "description": genre.description} for genre in song.genres],
+                'songURL' : song.songURL,
+                'imageSongURL' : song.imageSongURL,
+            }
+            songList.append(songData)
+
+    return jsonify({"SearchTitle" :songList })
+
+def play(email):
+    songData = {
+        "title" : request.json["title"]
+    }
+    user = Users.objects(email=email).first()
+    if user :
+
+        song = next((s for s in user.songs if s.title == songData['title']), None)
+
+        if song:
+            song_url = song.songURL
+            return jsonify({"PlaySong": song_url})
+        else:
+            return jsonify({"message": "Song not found"})
+    else:
+            return jsonify({"message": "User not found"})
+
 
 def listFavorites(email):
     user = email
@@ -121,120 +217,119 @@ def favorite(email):
 
     return jsonify({"SongFavorite" : "Successfull"})
 
-def searchGender(email):
+# -------------------------- GENRES ---------
+
+def addGenreSong(genre, song):
+    song = Song.objects(id=song.id).first()
+    song.genres = song.genres + [CreateGenre(_id=genre.id, description = genre.description)]
+
+    song.save()
+
+
+def newGenre(user, genre, song):
+    addGenreSongUser(user, genre, song)
+    addGenreSong(genre, song)
+    addSongGenre(genre, song)
+    addGenrePlayList(user, genre, song)
+    songDataRedis(user.email)
+
+
+def addGenre(email):
     songData = {
-        'gender': request.json["gender"],
+        "id_song" : request.json["id_song"],
+        "id_genre" : request.json["id_genre"]
     }
 
-    user = email
-    songs = Song.objects(gender = songData["gender"], user=user)
-    songList = []
+    song = Song.objects(id = ObjectId(songData['id_song'])).first()
+    genre = Genre.objects(id = ObjectId(songData['id_genre'])).first()
+    user = Users.objects(email = email).first()
 
-    for song in songs:
-        songData = {
-            'id' : str(song.id),
-            'title' : song.title,
-            'artist' : song.artist,
-            'gender' : song.gender,
-            'favorite' : song.favorite,
-            'songURL' : song.songURL,
-            'imageSongURL' : song.imageSongURL,
-        }
-        songList.append(songData)
+    # if exist(song):
+    newGenre(user, genre, song)
+    return jsonify({"updateGender" : "Update Gender Successful"})
+    # else:
+    #     return jsonify({"updateGender" : "Update Gender Failed"})
 
-    return jsonify({"SearchGender" :songList })
+def newTitleSong(title, song):
+    song = Song.objects(id=song.id).first()
+    song.title = title
+    song.save()
 
-def searchTitle(email):
+def newTitle(user, title, song):
+    newTitleSongUser(user, title, song)
+    newTitleSong(title, song)
+    newTitleGenre(title, song)
+    newTitlePlayList(user, title, song)
+    songDataRedis(user.email)
+
+
+def updateTitle(email):
     songData = {
-        'title': request.json["title"],
-    }
-
-    user = email
-    songs = Song.objects(title = songData["title"], user=user)
-    songList = []
-
-    for song in songs:
-        songData = {
-            'id' : str(song.id),
-            'title' : song.title,
-            'artist' : song.artist,
-            'gender' : song.gender,
-            'favorite' : song.favorite,
-            'songURL' : song.songURL,
-            'imageSongURL' : song.imageSongURL,
-        }
-        songList.append(songData)
-
-    return jsonify({"SearchTitle" :songList })
-
-def play(email):
-    songData = {
+        "id_song" : request.json["id_song"],
         "title" : request.json["title"]
     }
-    user = email
 
-    song = Song.objects(title = songData["title"], user=user).first()
+    song = Song.objects(id = ObjectId(songData['id_song'])).first()
+    user = Users.objects(email = email).first()
 
-    songURL = song.songURL
+    newTitle(user, songData['title'], song)
+    return jsonify({"updateGender" : "Update Gender Successful"})
 
-    return jsonify({"PlaySong" : songURL})
+def newArtistSong(artist, song):
+    song = Song.objects(id=song.id).first()
+    song.artist = artist
+    song.save()
+
+def newArtist(user, artist, song):
+    newArtistSongUser(user, artist, song)
+    newArtistSong(artist, song)
+    newArtistGenre(artist, song)
+    newArtistPlayList(user, artist, song)
+    songDataRedis(user.email)
+
+
+def updateArtist(email):
+    songData = {
+        "id_song" : request.json["id_song"],
+        "artist" : request.json["artist"]
+    }
+
+    song = Song.objects(id = ObjectId(songData['id_song'])).first()
+    user = Users.objects(email = email).first()
+
+    newArtist(user, songData['artist'], song)
+    return jsonify({"updateGender" : "Update Gender Successful"})
+    
+def totalUserSongs(email):
+    user = Users.objects(email=email).first()
+    if user :
+        totalSongs= len(user.songs)
+        key = f'TotalUserSongs:{email}'
+        
+        redis_client.set(key, totalSongs)
+
+        return jsonify({"TotalUserSongs": totalSongs})
+    else:
+        return jsonify({"message": "User Not Found"})
+
+def totalUserSongsRedis(email):
+    key = f'TotalUserSongs:{email}'
+    totalSongs =  redis_client.get(key)
+    songs_str = totalSongs.decode('utf-8')
+    return jsonify({"TotalUserSongs": int(songs_str)})
+
+def totalSongs():
+    songs = Song.objects.all()
+    totalSong = len(songs)
+    redis_client.set('totalSong', totalSong)
+    return jsonify({"TotalSongs": totalSong})
+
+def totalSongsRedis():
+    totalSongs =  redis_client.get('totalSong')
+    songs_str = totalSongs.decode('utf-8')
+    return jsonify({"TotalSongs": int(songs_str)})
 
 def exist(data):
     return True if not data == None else False 
 
-def updateArtist(email):
-    songData = {
-        "artist" : request.json["artist"],
-        "title" : request.json["title"],
-        "newArtist" : request.json["newArtist"]
 
-    }
-
-    song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
-    if exist(song):
-        song.artist = songData["newArtist"]
-        song.save()
-        return jsonify({"updateArtist" : "Update Artist Successful"})
-    else:
-        return jsonify({"updateArtist" : "Update Artist Failed"})
-
-def updateTitle(email):
-    songData = {
-        "artist" : request.json["artist"],
-        "title" : request.json["title"],
-        "newTitle" : request.json["newTitle"]
-    }
-
-    song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
-    if exist(song):
-        song.title = songData["newTitle"]
-        song.save()
-        return jsonify({"updateTitle" : "Update Title Successful"})
-    else:
-        return jsonify({"updateTitle" : "Update Title Failed"})
-
-def updateGender(email):
-    songData = {
-        "artist" : request.json["artist"],
-        "title" : request.json["title"],
-        "newGender" : request.json["newGender"]
-    }
-
-    song = Song.objects(artist = songData["artist"], user=email,  title=songData["title"]).first()
-    if exist(song):
-        song.gender = songData["newGender"]
-        song.save()
-        return jsonify({"updateGender" : "Update Gender Successful"})
-    else:
-        return jsonify({"updateGender" : "Update Gender Failed"})
-
-def deleteSong(email):
-    songData = {
-        "title" : request.json["title"]
-    }
-
-    song = Song.objects(user = email, title = songData["title"]).first()
-
-    song.delete()
-
-    return jsonify({"DeleteSong": "Song deleted successfully"})

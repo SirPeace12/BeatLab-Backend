@@ -6,11 +6,13 @@ from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_b
 from flask_cloudy import Storage
 import mongoengine
 
+from flask_redis import FlaskRedis
+
 # inicializacion de la aplicacion
 app = Flask(__name__)
 
 # Conexion al servidor de las canciones en Microsoft BLOB storage
-CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=beatlab;AccountKey=wxtVr/zpbjPkihy/ysj528e4Af7eN5lpDvhNbBhmJyuG9kjzLlitGmlH/Mn9pkvGSMmpNchi/ygV+AStI1V2AQ==;EndpointSuffix=core.windows.net"
+CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=beatlabsql;AccountKey=JpYdCBjz//Uh4hTMEUjy8oIw3/MgyJWa+bhBt1quQtKDVKJpFw98AgUMuOT7xQbKj6o9zrO+Iqbw+AStlum3Qg==;EndpointSuffix=core.windows.net"
 CONTAINER_NAME_SONG = "songs"
 CONTAINER_NAME_IMAGES_SONG = "imagesong"
 CONTAINER_NAME_IMAGES_USER = "imageuser"
@@ -23,14 +25,30 @@ container_client_images_song = blob_service_client.get_container_client(CONTAINE
 container_client_images_user = blob_service_client.get_container_client(CONTAINER_NAME_IMAGES_USER)
 
 
-# Conexion a la base de datos en MONGO
-app.config['MONGO_URI']='mongodb://localhost:27017/BeatLab'
-mongo = PyMongo(app)
-db = mongo.db.users
-dbSongs = mongo.db.songs
-db.create_index('email', unique=True)
-mongoengine.connect('BeatLab', host='localhost', port=27017)
+# Conexion a la base de datos en MONGO Local
+# app.config['MONGO_URI']='mongodb://localhost:27017/BeatLab'
+# mongo = PyMongo(app)
+# db = mongo.db.users
+# dbSongs = mongo.db.songs
+# db.create_index('email', unique=True)
+# mongoengine.connect('BeatLab', host='localhost', port=27017)
 
+# Conexion a la base de datos en MONGO atalas
+app.config['MONGO_URI']='mongodb+srv://miguelangelpazvelasco:ej4DmounpMmoQtYu@cluster0.i8s8b1z.mongodb.net/BeatLab'
+
+# app.config['MONGODB_SETTINGS'] = {
+#     'db': 'BeatLab',
+#     'host': 'mongodb+srv://miguelangelpazvelasco:ej4DmounpMmoQtYu@cluster0.i8s8b1z.mongodb.net/',
+#     'connect': True  # Puedes establecerlo como True si prefieres una conexión persistente
+# }
+
+# Inicializa la extensión MongoEngine
+# db = MongoEngine(app)
+mongoengine.connect('BeatLab', host='mongodb+srv://miguelangelpazvelasco:ej4DmounpMmoQtYu@cluster0.i8s8b1z.mongodb.net/')
+
+# Conexion a redis
+app.config['REDIS_URL'] = "redis://default:oxWSVaw6SAJadsrc7SqN2aiUrXsGvM2C@redis-15385.c326.us-east-1-3.ec2.cloud.redislabs.com:15385"
+redis_client = FlaskRedis(app)
 
 # Configuracion para enviar el correo de recuperacion
 app.config['SESSION_TYPE'] = 'filesystem'
